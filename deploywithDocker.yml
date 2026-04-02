@@ -9,7 +9,7 @@
       shell: docker login -u siddeshg672@gmail.com -p Siddesh@123456 hiqodenew.jfrog.io  
     
     - name: pull an image
-      shell: docker pull hiqodenew.jfrog.io/sample-war-app/sample_docker_image_with_war_deploy:v1.0-{{ build_number }}
+      shell: docker pull trialtypobk.jfrog.io/testapp/sampledockeruplaod:v.1.0.1-{{ build_number }}
 
     - name: remove container
       shell: docker rm -f devopsAppDeploy
