@@ -1,19 +1,31 @@
 ---
 - hosts: websever
   become: yes
-  vars:
-    build_number: '{{ BUILD_NUMBER }}'
-  tasks:
-      
-    - name: login to jfrog
-      shell: docker login -u test -p Test@12345 trialtypobk.jfrog.io
-    
-    - name: pull an image
-      shell: docker pull trialtypobk.jfrog.io/testapp/sampledockeruplaod:v.1.0.1-{{ build_number }}
 
-    - name: remove container
-      shell: docker rm -f devopsAppDeploy
-        
-    - name: create application container
-      shell: docker run -id --name devopsAppDeploy -p 8111:8080 trialtypobk.jfrog.io/testapp/sampledockeruplaod:v.1.0.1-{{ build_number }}
-   
+  vars:
+    build_number: "{{ BUILD_NUMBER }}"
+    image_name: "trialtypobk.jfrog.io/testapp/sampledockeruplaod"
+    image_tag: "v.1.0.1-{{ build_number }}"
+
+  tasks:
+
+    - name: Login to JFrog
+      docker_login:
+        registry_url: trialtypobk.jfrog.io
+        username: test
+        password: Test@12345
+
+    - name: Pull image
+      docker_image:
+        name: "{{ image_name }}"
+        tag: "{{ image_tag }}"
+        source: pull
+
+    - name: Run container
+      docker_container:
+        name: devopsAppDeploy
+        image: "{{ image_name }}:{{ image_tag }}"
+        state: started
+        recreate: yes
+        ports:
+          - "8111:8080"
